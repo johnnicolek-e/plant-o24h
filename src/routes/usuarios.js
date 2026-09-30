@@ -36,4 +36,21 @@ router.post("/usuarios", async (req, res) => {
   }
 });
 
+router.get("/usuarios", async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      "SELECT * FROM usuarios"
+    );
+
+    res.status(200).json(resultado.rows);
+
+  } catch (erro) {
+    console.error("Erro ao buscar usuários:", erro.message);
+
+    res.status(500).json({
+      erro: "Erro interno do servidor"
+    });
+  }
+});
+
 module.exports = router;
