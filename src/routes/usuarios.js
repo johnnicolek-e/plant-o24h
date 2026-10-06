@@ -1,8 +1,12 @@
 const express = require("express");
 const validarUsuario = require("../validacoes");
 const pool = require("../database");
+
 const router = express.Router();
 
+// ======================================================
+// POST - Criar usuário
+// ======================================================
 router.post("/usuarios", async (req, res) => {
   const { nome, email, telefone } = req.body || {};
 
@@ -30,12 +34,22 @@ router.post("/usuarios", async (req, res) => {
   } catch (erro) {
     console.error("Erro ao inserir usuário:", erro.message);
 
+    // E-mail já cadastrado
+    if (erro.code === "23505") {
+      return res.status(409).json({
+        erro: "Este email já está cadastrado"
+      });
+    }
+
     res.status(500).json({
       erro: "Erro interno do servidor"
     });
   }
 });
 
+// ======================================================
+// GET - Listar todos os usuários
+// ======================================================
 router.get("/usuarios", async (req, res) => {
   try {
     const resultado = await pool.query(
@@ -53,6 +67,9 @@ router.get("/usuarios", async (req, res) => {
   }
 });
 
+// ======================================================
+// GET - Buscar usuário por ID
+// ======================================================
 router.get("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -79,6 +96,9 @@ router.get("/usuarios/:id", async (req, res) => {
   }
 });
 
+// ======================================================
+// PUT - Atualizar usuário por ID
+// ======================================================
 router.put("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, email, telefone } = req.body || {};
@@ -114,12 +134,22 @@ router.put("/usuarios/:id", async (req, res) => {
   } catch (erro) {
     console.error("Erro ao atualizar usuário:", erro.message);
 
+    // E-mail já cadastrado
+    if (erro.code === "23505") {
+      return res.status(409).json({
+        erro: "Este email já está cadastrado"
+      });
+    }
+
     res.status(500).json({
       erro: "Erro interno do servidor"
     });
   }
 });
 
+// ======================================================
+// DELETE - Excluir usuário por ID
+// ======================================================
 router.delete("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
 
