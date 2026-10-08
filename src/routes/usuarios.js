@@ -73,6 +73,12 @@ router.get("/usuarios", async (req, res) => {
 router.get("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
 
+  if (isNaN(id)) {
+    return res.status(400).json({
+      erro: "ID deve ser um número"
+    });
+  }
+
   try {
     const resultado = await pool.query(
       "SELECT * FROM usuarios WHERE id = $1",
@@ -102,6 +108,13 @@ router.get("/usuarios/:id", async (req, res) => {
 router.put("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, email, telefone } = req.body || {};
+
+  // Validar ID
+  if (isNaN(id)) {
+    return res.status(400).json({
+      erro: "ID deve ser um número"
+    });
+  }
 
   const erro = validarUsuario(nome, email, telefone);
 
@@ -152,6 +165,13 @@ router.put("/usuarios/:id", async (req, res) => {
 // ======================================================
 router.delete("/usuarios/:id", async (req, res) => {
   const { id } = req.params;
+
+  // Validar ID
+  if (isNaN(id)) {
+    return res.status(400).json({
+      erro: "ID deve ser um número"
+    });
+  }
 
   try {
     const resultado = await pool.query(
